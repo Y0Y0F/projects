@@ -5,6 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>rabbitMQ</module>
+        <module>common-util</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
