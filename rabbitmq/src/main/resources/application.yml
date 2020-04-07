@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: rabbitmq-demo
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+    listener:
+      simple:
+        concurrency: 10 # 并发消费者的初始化值
+        max-concurrency: 20 # 并发消费者的最大值
+        prefetch: 5 # 每个消费者每次监听时可拉取处理的消息数量
+        acknowledge-mode: manual # 开启ACK
+      direct:
+        acknowledge-mode: manual # 开启ACK
+    publisher-returns: true # 开启发送失败退回
+    publisher-confirms: true # 开启发送确认
+
+
