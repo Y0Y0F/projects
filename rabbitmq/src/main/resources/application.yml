@@ -11,13 +11,13 @@ spring:
     password: admin
     listener:
       simple:
-        concurrency: 10 # ²¢·¢Ïû·ÑÕßµÄ³õÊ¼»¯Öµ
-        max-concurrency: 20 # ²¢·¢Ïû·ÑÕßµÄ×î´óÖµ
-        prefetch: 5 # Ã¿¸öÏû·ÑÕßÃ¿´Î¼àÌıÊ±¿ÉÀ­È¡´¦ÀíµÄÏûÏ¢ÊıÁ¿
-        acknowledge-mode: manual # ¿ªÆôACK
+        concurrency: 10 # å¹¶å‘æ¶ˆè´¹è€…çš„åˆå§‹åŒ–å€¼
+        max-concurrency: 20 # å¹¶å‘æ¶ˆè´¹è€…çš„æœ€å¤§å€¼
+        prefetch: 5 # æ¯ä¸ªæ¶ˆè´¹è€…æ¯æ¬¡ç›‘å¬æ—¶å¯æ‹‰å–å¤„ç†çš„æ¶ˆæ¯æ•°é‡
+        acknowledge-mode: manual # å¼€å¯ACK
       direct:
-        acknowledge-mode: manual # ¿ªÆôACK
-    publisher-returns: true # ¿ªÆô·¢ËÍÊ§°ÜÍË»Ø
-    publisher-confirms: true # ¿ªÆô·¢ËÍÈ·ÈÏ
+        acknowledge-mode: manual # å¼€å¯ACK
+    publisher-confirms: true # å¼€å¯å‘é€ç¡®è®¤
+    publisher-returns: true # å¼€å¯å‘é€å¤±è´¥é€€å›
 
 

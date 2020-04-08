@@ -4,24 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class productService  implements RabbitTemplate.ReturnCallback,RabbitTemplate.ConfirmCallback{
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+public class CallbackSend implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
 
-    public void send() throws InterruptedException {
-        for (int i = 1; i < 10; i++) {
-            Thread.sleep(1000);
-            String text = "hello, 序号: " + i;
-            rabbitTemplate.setReturnCallback(this);
-            rabbitTemplate.setConfirmCallback(this);
-            rabbitTemplate.convertAndSend("hello",text);
-        }
-    }
 
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
@@ -34,6 +22,8 @@ public class productService  implements RabbitTemplate.ReturnCallback,RabbitTemp
 
     @Override
     public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
-        System.out.println("sender return success" + message.toString()+"==="+replyCode+"==="+replyText+"==="+exchange+"routingKey");
+        System.out.println("消息未能成功路由到指定queues");
+        System.out.println("return--message:" + new String(message.getBody()) + ",replyCode:" + replyCode
+                + ",replyText:" + replyText + ",exchange:" + exchange + ",routingKey:" + routingKey);
     }
 }

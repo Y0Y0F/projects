@@ -1,16 +1,18 @@
 package com.demo.rabbitmq.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.cache.interceptor.CacheAspectSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import sun.plugin2.message.Message;
 
 /**
  * Broker:它提供一种传输服务,它的角色就是维护一条从生产者到消费者的路线，保证数据能按照指定的方式进行传输,
@@ -41,18 +43,37 @@ public class rabbitConfig {
     private String password;
 
 
-    public static final String EXCHANGE_A = "exchange_A";
-    public static final String EXCHANGE_B = "exchange_B";
-    public static final String EXCHANGE_C = "exchange_C";
+    @Bean
+    public Queue QueueA() {
+        return new Queue("" +
+                "");
+    }
+
+    @Bean
+    public Queue QueueB() {
+        return new Queue("helloObj");
+    }
+
+    /**
+     * Fanout 就是我们熟悉的广播模式或者订阅模式，给Fanout交换机发送消息，绑定了这个交换机的所有队列都收到这个消息。
+     * @return
+     */
+    @Bean
+    FanoutExchange fanoutExchange() {
+        return new FanoutExchange("ABExchange");
+    }
 
 
-    public static final String QUEUE_A = "QUEUE_A";
-    public static final String QUEUE_B = "QUEUE_B";
-    public static final String QUEUE_C = "QUEUE_C";
+    @Bean
+    Binding bindingExchangeA(Queue QueueA, FanoutExchange fanoutExchange) {
+        return BindingBuilder.bind(QueueA).to(fanoutExchange);
+    }
 
-    public static final String ROUTINGKEY_A = "routingKey_A";
-    public static final String ROUTINGKEY_B = "routingKey_B";
-    public static final String ROUTINGKEY_C = "routingKey_C";
+    @Bean
+    Binding bindingExchangeB(Queue QueueB, FanoutExchange fanoutExchange) {
+        return BindingBuilder.bind(QueueB).to(fanoutExchange);
+    }
+
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -70,19 +91,8 @@ public class rabbitConfig {
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
         //消息发送失败返回队列中
-        template.setMandatory(true);
-        template.setConfirmCallback((correlationData, ack, cause) -> {
-          if(ack){
-            log.info("消息发送成功");
-          }else{
-              log.info("消息发送失败，原因：{}", cause);
-          }
-        });
-
-        template.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            String correlationId = message.getMessageProperties().getCorrelationId();
-            log.info("消息：{}发送失败，应答码：{}，原因：{}，交换机：{}，路由：{}",correlationId,replyCode,replyText,exchange,routingKey);
-        });
+//        template.setConfirmCallback();
+//        template.setReturnCallback(new CallbackSend());
         return template;
     }
 }
